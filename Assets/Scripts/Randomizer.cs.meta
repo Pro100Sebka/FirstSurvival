@@ -3,7 +3,9 @@ guid: 3d2991dadb2728248a086b844d140871
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - cube: {instanceID: 0}
+  - plrPos: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
