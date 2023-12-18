@@ -1,21 +1,24 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerValues : MonoBehaviour
 {
-    [SerializeField] Slider mainslider;
+    [SerializeField] Slider waterSlider;
+    [SerializeField] Slider healthSlider;
     private float water;
-
+    private float health;
     [SerializeField] private float waterMinus;
-
+    private bool colided;
+    
     private void Start()
     {
         water = 1f;
+        health = 1f;
+        colided = false;
         UpdateUI();
         StartCoroutine(WaterCoroutine());
+        
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
@@ -28,11 +31,18 @@ public class PlayerValues : MonoBehaviour
                 StartCoroutine(WaterAdd());
             }
         }
+
+        if (hit.gameObject.CompareTag("Cactus"))
+        {
+            StartCoroutine(CactusColiding());
+        }
     }
+
 
     private void UpdateUI()
     {
-        mainslider.value = water;
+        waterSlider.value = water;
+        healthSlider.value = health;
     }
 
     IEnumerator WaterCoroutine()
@@ -55,8 +65,20 @@ public class PlayerValues : MonoBehaviour
 
         }
     }
-    
-    
 
- 
+    IEnumerator CactusColiding()
+    {
+        if (colided == false)
+        {
+            colided = true;
+            for (int i = 0; i < 100; i++)
+            {
+                health -= 0.001f;
+                UpdateUI();
+                yield return new WaitForSeconds(0.001f);
+            }
+            colided = false;
+        }
+
+    }
 }
