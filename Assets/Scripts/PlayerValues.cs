@@ -10,12 +10,14 @@ public class PlayerValues : MonoBehaviour
     private float health;
     [SerializeField] private float waterMinus;
     private bool colided;
+    private bool canTakeDamage;
     
     private void Start()
     {
         water = 1f;
         health = 1f;
         colided = false;
+        canTakeDamage = true;
         UpdateUI();
         StartCoroutine(WaterCoroutine());
         
@@ -34,7 +36,10 @@ public class PlayerValues : MonoBehaviour
 
         if (hit.gameObject.CompareTag("Cactus"))
         {
-            StartCoroutine(CactusColiding());
+            if (canTakeDamage)
+            {
+                StartCoroutine(GettingDamage());
+            }
         }
     }
 
@@ -66,20 +71,15 @@ public class PlayerValues : MonoBehaviour
         }
     }
 
-    IEnumerator CactusColiding()
+    IEnumerator GettingDamage()
     {
-        if (colided == false)
-        {
-            colided = true;
-            for (int i = 0; i < 100; i++)
-            {
-                health -= 0.001f;
-                UpdateUI();
-                yield return new WaitForSeconds(0.001f);
-            }
-            colided = false;
-        }
+        canTakeDamage = false;
+        
+        health -= 0.1f;
+        UpdateUI();
+        yield return new WaitForSeconds(5);
+        canTakeDamage = true;
 
     }
-    
+
 }
