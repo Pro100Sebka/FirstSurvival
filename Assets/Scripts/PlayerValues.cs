@@ -11,6 +11,7 @@ public class PlayerValues : MonoBehaviour
     [SerializeField] private float waterMinus;
     private bool colided;
     private bool canTakeDamage;
+    [SerializeField] private AudioSource _audioSource;
     
     private void Start()
     {
@@ -27,6 +28,7 @@ public class PlayerValues : MonoBehaviour
     {
         if (hit.gameObject.CompareTag("Water"))
         {
+            _audioSource.Play();
             Destroy(hit.gameObject);
             if (water <= 1f)
             {
