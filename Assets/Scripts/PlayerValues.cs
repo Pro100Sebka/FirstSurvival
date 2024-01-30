@@ -9,9 +9,12 @@ public class PlayerValues : MonoBehaviour
     private float water;
     private float health;
     [SerializeField] private float waterMinus;
+    [SerializeField] private int damageColdoown;
     private bool colided;
     private bool canTakeDamage;
+    private GameManager _gameManager;
     [SerializeField] private AudioSource _audioSource;
+    [SerializeField] private AudioSource damageSound;
     
     private void Start()
     {
@@ -21,7 +24,8 @@ public class PlayerValues : MonoBehaviour
         canTakeDamage = true;
         UpdateUI();
         StartCoroutine(WaterCoroutine());
-        
+        _gameManager = FindObjectOfType<GameManager>();
+
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
@@ -41,6 +45,8 @@ public class PlayerValues : MonoBehaviour
             if (canTakeDamage)
             {
                 StartCoroutine(GettingDamage());
+                StartCoroutine(_gameManager.Damage());
+                damageSound.Play();
             }
         }
     }
@@ -79,7 +85,7 @@ public class PlayerValues : MonoBehaviour
         
         health -= 0.1f;
         UpdateUI();
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(damageColdoown);
         canTakeDamage = true;
 
     }
