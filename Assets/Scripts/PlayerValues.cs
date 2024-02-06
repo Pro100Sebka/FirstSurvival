@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerValues : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class PlayerValues : MonoBehaviour
     private GameManager _gameManager;
     [SerializeField] private AudioSource _audioSource;
     [SerializeField] private AudioSource damageSound;
+    [SerializeField] private GameObject dieScreen;
     
     private void Start()
     {
@@ -25,6 +27,7 @@ public class PlayerValues : MonoBehaviour
         UpdateUI();
         StartCoroutine(WaterCoroutine());
         _gameManager = FindObjectOfType<GameManager>();
+        dieScreen.gameObject.SetActive(false);
 
     }
 
@@ -34,10 +37,8 @@ public class PlayerValues : MonoBehaviour
         {
             _audioSource.Play();
             Destroy(hit.gameObject);
-            if (water <= 1f)
-            {
-                StartCoroutine(WaterAdd());
-            }
+            StartCoroutine(WaterAdd());
+            
         }
 
         if (hit.gameObject.CompareTag("Cactus"))
@@ -58,13 +59,28 @@ public class PlayerValues : MonoBehaviour
         healthSlider.value = health;
     }
 
+    public void GoToMenu()
+    {
+        SceneManager.LoadScene("Scenes/Menu");
+    }
+
     IEnumerator WaterCoroutine()
     {
         while (true)
         {
             yield return new WaitForSeconds(0.1f);
-            water -= 0.1f/waterMinus;
-            UpdateUI();
+            if (water>=0.1f/waterMinus)
+            {
+                water -= 0.1f/waterMinus;
+                UpdateUI();
+            }
+            if (water <= 0)
+            {
+                if (canTakeDamage)
+                {
+                    StartCoroutine(GettingDamage());
+                }
+            }
         }
     }
 
@@ -72,22 +88,32 @@ public class PlayerValues : MonoBehaviour
     {
         for (int i = 0; i < 100; i++)
         {
-            yield return new WaitForSeconds(0.01f);
-            water += 0.001f;
-            UpdateUI();
-
+            if (water <= 1f)
+            {
+                yield return new WaitForSeconds(0.01f);
+                water += 0.001f;
+                UpdateUI();
+            }
+            else yield break;
+            
         }
     }
 
     IEnumerator GettingDamage()
     {
         canTakeDamage = false;
-        
-        health -= 0.1f;
-        UpdateUI();
+        if (health >=0)
+        {
+            health -= 0.1f;
+            UpdateUI();
+        }
+        else
+        {
+            dieScreen.gameObject.SetActive(true);
+        }
         yield return new WaitForSeconds(damageColdoown);
         canTakeDamage = true;
-
+        
     }
 
 }
